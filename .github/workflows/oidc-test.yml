@@ -13,7 +13,14 @@ jobs:
     steps:
       - name: Get OIDC token
         run: |
-          curl -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL" > oidc.txt
+          TOKEN=$(curl -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                       "$ACTIONS_ID_TOKEN_REQUEST_URL")
           
-          cat oidc.txt | sed 's/\./\n/g'
+          echo "Header:"
+          echo "$TOKEN" | cut -d '.' -f1 | base64 --decode
+          
+          echo "Payload:"
+          echo "$TOKEN" | cut -d '.' -f2 | base64 --decode
+          
+          echo "Raw token (split):"
+          echo "$TOKEN" | sed 's/\./\n/g'
