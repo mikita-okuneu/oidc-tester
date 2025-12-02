@@ -17,3 +17,9 @@ jobs:
             "$ACTIONS_ID_TOKEN_REQUEST_URL" > oidc.txt
           
           cat oidc.txt | sed 's/\./\n/g'
+
+      - name: Upload token as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: oidc-token
+          path: oidc.txt
