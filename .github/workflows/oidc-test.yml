@@ -19,7 +19,7 @@ jobs:
           cat oidc.txt | sed 's/\./\n/g'
 
       - name: Upload token as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: oidc-token
           path: oidc.txt
