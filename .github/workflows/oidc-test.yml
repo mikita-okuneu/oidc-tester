@@ -15,10 +15,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup Python for Cycode CLI
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
       - name: Install Cycode CLI
         run: |
-          curl -L https://cycodecli.cycode.com/install.sh | bash
-          echo "$HOME/.cycode/bin" >> $GITHUB_PATH
+          pip3 install --upgrade cycode
 
       - name: Get OIDC token
         id: oidc
