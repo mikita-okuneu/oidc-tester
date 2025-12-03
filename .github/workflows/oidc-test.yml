@@ -36,4 +36,4 @@ jobs:
 
       - name: Run scans
         run: |
-          cycode scan -t secret
+          cycode scan
