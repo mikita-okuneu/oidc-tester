@@ -38,4 +38,5 @@ jobs:
 
       - name: Run scans
         run: |
-          cycode scan path .
+          cycode status
+          cycode --client-id $CYCODE_CLIENT_ID --id-token $TOKEN scan path .
