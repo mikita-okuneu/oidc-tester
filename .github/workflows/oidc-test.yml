@@ -31,9 +31,8 @@ jobs:
                       "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=cycode")
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
-      - name: Authenticate
-        run: |
-          cycode auth oidc --client_id '${{ secrets.CYCODE_CLIENT_ID }}' --id-token '${{ steps.oidc.outputs.token }}'
+      - name: Set environment variable
+        run: echo "CYCODE_API_URL=${{ secrets.CYCODE_API_URL }}" >> $GITHUB_ENV
 
       - name: Run scans
         run: |
