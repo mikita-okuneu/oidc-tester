@@ -36,6 +36,4 @@ jobs:
 
       - name: Run scans
         run: |
-          cycode scan secrets .
-          cycode scan sast .
-          cycode scan iac .
+          cycode scan -t secret
