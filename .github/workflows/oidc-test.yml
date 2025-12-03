@@ -18,15 +18,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Setup Python
       - name: Setup Python for Cycode CLI
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
 
+      # Install Cycode CLI
       - name: Install Cycode CLI
         run: |
           pip3 install --upgrade cycode
 
+      # Request OIDC token from GitHub
       - name: Get OIDC token
         id: oidc
         run: |
@@ -34,9 +37,10 @@ jobs:
                       "$ACTIONS_ID_TOKEN_REQUEST_URL" | jq -r '.value')
           echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
+      # Run scans using client id from GitHub variables and OIDC token from previous step
       - name: Run scans
         env:
           CYCODE_ID_TOKEN: ${{ steps.oidc.outputs.token }}
         run: |
           cycode status
-          cycode --client-id "$CYCODE_CLIENT_ID" --id-token "$CYCODE_ID_TOKEN" scan path .
+          cycode scan path .
