@@ -1,25 +1,38 @@
-name: OIDC Test
+name: Cycode Scan (OIDC)
 
 on:
-  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  test-oidc:
+  cycode:
     runs-on: ubuntu-latest
-    steps:
-      - name: Get OIDC token
-        run: |
-          curl -H "Authorization: Bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-            "$ACTIONS_ID_TOKEN_REQUEST_URL" > oidc.txt
-          
-          cat oidc.txt | sed 's/\./\n/g'
 
-      - name: Upload token as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: oidc-token
-          path: oidc.txt
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Cycode CLI
+        run: |
+          curl -L https://cycodecli.cycode.com/install.sh | bash
+          echo "$HOME/.cycode/bin" >> $GITHUB_PATH
+
+      - name: Get OIDC token
+        id: oidc
+        run: |
+          TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                      "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=cycode")
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Authenticate
+        run: |
+          cycode auth oidc --client_id '${{ secrets.CYCODE_CLIENT_ID }}' --id-token '${{ steps.oidc.outputs.token }}'
+
+      - name: Run scans
+        run: |
+          cycode scan secrets .
+          cycode scan sast .
+          cycode scan iac .
