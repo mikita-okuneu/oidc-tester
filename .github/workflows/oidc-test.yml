@@ -33,6 +33,8 @@ jobs:
 
       - name: Set environment variable
         run: echo "CYCODE_API_URL=${{ secrets.CYCODE_API_URL }}" >> $GITHUB_ENV
+             echo "CYCODE_CLIENT_ID=${{ secrets.CYCODE_CLIENT_ID }}" >> $GITHUB_ENV
+             echo "CYCODE_API_URL=${{ secrets.CYCODE_API_URL }}" >> $GITHUB_ENV
 
       - name: Run scans
         run: |
