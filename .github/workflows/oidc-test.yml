@@ -11,6 +11,9 @@ permissions:
 jobs:
   cycode:
     runs-on: ubuntu-latest
+    env:
+      CYCODE_API_URL: ${{ vars.CYCODE_API_URL }}
+      CYCODE_CLIENT_ID: ${{ secrets.CYCODE_CLIENT_ID }}
 
     steps:
       - uses: actions/checkout@v4
@@ -27,16 +30,13 @@ jobs:
       - name: Get OIDC token
         id: oidc
         run: |
-          TOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-                      "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=cycode")
-          echo "token=$TOKEN" >> $GITHUB_OUTPUT
-
-      - name: Set environment variable
-        run: echo "CYCODE_API_URL=$CYCODE_API_URL"
-             echo "CYCODE_CLIENT_ID=$CYCODE_CLIENT_ID"
-             echo "CYCODE_ID_TOKEN=$TOKEN"
+          TOKEN=$(curl -s -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+                      "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=cycode" | jq -r '.value')
+          echo "token=$TOKEN" >> "$GITHUB_OUTPUT"
 
       - name: Run scans
+        env:
+          CYCODE_ID_TOKEN: ${{ steps.oidc.outputs.token }}
         run: |
           cycode status
-          cycode --client-id $CYCODE_CLIENT_ID --id-token $TOKEN scan path .
+          cycode --client-id "$CYCODE_CLIENT_ID" --id-token "$CYCODE_ID_TOKEN" scan path .
