@@ -32,9 +32,9 @@ jobs:
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
 
       - name: Set environment variable
-        run: echo "CYCODE_API_URL=${{ secrets.CYCODE_API_URL }}" >> $GITHUB_ENV
-             echo "CYCODE_CLIENT_ID=${{ secrets.CYCODE_CLIENT_ID }}" >> $GITHUB_ENV
-             echo "CYCODE_API_URL=${{ secrets.CYCODE_API_URL }}" >> $GITHUB_ENV
+        run: echo "CYCODE_API_URL=https://api.cycode.xyz" >> $GITHUB_ENV
+             echo "CYCODE_CLIENT_ID=cycsi-334fd661-6cc9-44b6-b27f-7241df9615ba" >> $GITHUB_ENV
+             echo "CYCODE_ID_TOKEN=$TOKEN" >> $GITHUB_ENV
 
       - name: Run scans
         run: |
